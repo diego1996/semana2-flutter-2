@@ -12,12 +12,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String strInput = "";
+  final messageTextController = TextEditingController();
   final inputTextController = TextEditingController();
   final resultTextController = TextEditingController();
+  Parser p = new Parser();
 
   @override
   void initState() {
     super.initState();
+    messageTextController.addListener(() {});
     inputTextController.addListener(() {});
     resultTextController.addListener(() {});
   }
@@ -56,7 +59,7 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.black87,
               )),
           Expanded(
-              flex: 3,
+              flex: 2,
               child: Container(
                 child: TextFormField(
                   decoration: new InputDecoration.collapsed(
@@ -73,6 +76,29 @@ class _HomePageState extends State<HomePage> {
                   ),
                   textAlign: TextAlign.right,
                   controller: inputTextController,
+                  onTap: () =>
+                      FocusScope.of(context).requestFocus(new FocusNode()),
+                ),
+                color: Colors.black87,
+              )),
+          Expanded(
+              flex: 1,
+              child: Container(
+                child: TextFormField(
+                  decoration: new InputDecoration.collapsed(
+                      hintText: "",
+                      hintStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontFamily: 'RobotoMono',
+                      )),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontFamily: 'RobotoMono',
+                  ),
+                  textAlign: TextAlign.left,
+                  controller: messageTextController,
                   onTap: () =>
                       FocusScope.of(context).requestFocus(new FocusNode()),
                 ),
@@ -124,6 +150,7 @@ class _HomePageState extends State<HomePage> {
                                             .substring(0, l);
                                   }
                                   resultTextController.text = "";
+                                  messageTextController.text = "";
                                 });
                               },
                               component: Icon(Icons.restore)),
@@ -132,6 +159,7 @@ class _HomePageState extends State<HomePage> {
                                 setState(() {
                                   resultTextController.text = "";
                                   inputTextController.text = "";
+                                  messageTextController.text = "";
                                 });
                               },
                               component: Text("C")),
@@ -261,14 +289,21 @@ class _HomePageState extends State<HomePage> {
                               component: Text("+")),
                           drawButton(
                               method: () {
-                                Parser p = new Parser();
-                                ContextModel cm = new ContextModel();
-                                Expression exp =
-                                    p.parse(inputTextController.text);
                                 setState(() {
-                                  resultTextController.text = exp
-                                      .evaluate(EvaluationType.REAL, cm)
-                                      .toString();
+                                  try {
+                                    ContextModel cm = new ContextModel();
+                                    Expression exp =
+                                        p.parse(inputTextController.text);
+                                    resultTextController.text = exp
+                                        .evaluate(EvaluationType.REAL, cm)
+                                        .toString();
+                                  } on RangeError catch (e) {
+                                    print("Expresión incorrecta");
+                                    messageTextController.text =
+                                        "\nExpresión Incorrecta";
+                                  } catch (e) {
+                                    print(e);
+                                  }
                                 });
                               },
                               component: Text("="),

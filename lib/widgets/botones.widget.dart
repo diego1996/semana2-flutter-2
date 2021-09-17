@@ -9,7 +9,7 @@ Widget drawButton(
       flex: valorFlex,
       child: Container(
         child: Padding(
-          padding: const EdgeInsets.all(2.0),
+          padding: const EdgeInsets.all(10.0),
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: colorButton,

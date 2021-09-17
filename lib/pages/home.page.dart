@@ -25,7 +25,8 @@ class _HomePageState extends State<HomePage> {
   static final noElementError = "No element";
   static final mismatchedParenthesisMessage =
       "\nDebe abrir o cerrar los parentesis";
-  static final noElementMessage = "\nDebe ingresar un valor a la expresión";
+  static final noElementMessage =
+      "\nDebe ingresar un valor para completar la expresión";
   static final imaginaryRootSquareError =
       "\nNo se pueden sacar raices cuadradas a numeros negativos";
 
@@ -52,6 +53,7 @@ class _HomePageState extends State<HomePage> {
               flex: 4,
               child: Container(
                 child: TextField(
+                  enabled: false,
                   decoration: new InputDecoration.collapsed(
                       hintText: "=",
                       hintStyle: TextStyle(
@@ -68,6 +70,8 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold),
                   textAlign: TextAlign.right,
                   controller: resultTextController,
+                  onTap: () =>
+                      FocusScope.of(context).requestFocus(new FocusNode()),
                 ),
                 color: Colors.black87,
               )),
@@ -75,6 +79,7 @@ class _HomePageState extends State<HomePage> {
               flex: 2,
               child: Container(
                 child: TextFormField(
+                  enabled: false,
                   decoration: new InputDecoration.collapsed(
                       hintText: "0",
                       hintStyle: TextStyle(
@@ -98,6 +103,7 @@ class _HomePageState extends State<HomePage> {
               flex: 1,
               child: Container(
                 child: TextFormField(
+                  enabled: false,
                   decoration: new InputDecoration.collapsed(
                       hintText: "",
                       hintStyle: TextStyle(

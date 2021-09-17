@@ -17,6 +17,18 @@ class _HomePageState extends State<HomePage> {
   final resultTextController = TextEditingController();
   Parser p = new Parser();
 
+  static final infinity = "Infinity";
+  static final nan = "NaN";
+  static final badExpressionError = "\nExpresión Incorrecta";
+  static final divisionByZeroError = "\nNo se puede dividir por cero";
+  static final mismatchedParenthesisError = "Mismatched parenthesis";
+  static final noElementError = "No element";
+  static final mismatchedParenthesisMessage =
+      "\nDebe abrir o cerrar los parentesis";
+  static final noElementMessage = "\nDebe ingresar un valor a la expresión";
+  static final imaginaryRootSquareError =
+      "\nNo se pueden sacar raices cuadradas a numeros negativos";
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text("${widget.title} - Modo Básico"),
       ),
@@ -89,12 +102,12 @@ class _HomePageState extends State<HomePage> {
                       hintText: "",
                       hintStyle: TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontSize: 15,
                         fontFamily: 'RobotoMono',
                       )),
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 15,
                     fontFamily: 'RobotoMono',
                   ),
                   textAlign: TextAlign.left,
@@ -294,15 +307,42 @@ class _HomePageState extends State<HomePage> {
                                     ContextModel cm = new ContextModel();
                                     Expression exp =
                                         p.parse(inputTextController.text);
-                                    resultTextController.text = exp
+                                    exp = exp.simplify();
+
+                                    String result = exp
                                         .evaluate(EvaluationType.REAL, cm)
                                         .toString();
+
+                                    if (result == infinity) {
+                                      throw IntegerDivisionByZeroException();
+                                    }
+                                    if (result == nan) {
+                                      throw (imaginaryRootSquareError);
+                                    }
+
+                                    resultTextController.text = result;
                                   } on RangeError catch (e) {
-                                    print("Expresión incorrecta");
                                     messageTextController.text =
-                                        "\nExpresión Incorrecta";
+                                        badExpressionError;
+                                  } on IntegerDivisionByZeroException catch (e) {
+                                    messageTextController.text =
+                                        divisionByZeroError;
+                                  } on Exception catch (e) {
+                                    messageTextController.text =
+                                        imaginaryRootSquareError;
                                   } catch (e) {
-                                    print(e);
+                                    String msgError = e.toString();
+                                    if (msgError
+                                        .contains(mismatchedParenthesisError)) {
+                                      messageTextController.text =
+                                          mismatchedParenthesisMessage;
+                                    } else if (msgError
+                                        .contains(noElementError)) {
+                                      messageTextController.text =
+                                          noElementMessage;
+                                    } else {
+                                      messageTextController.text = "\n$e";
+                                    }
                                   }
                                 });
                               },
